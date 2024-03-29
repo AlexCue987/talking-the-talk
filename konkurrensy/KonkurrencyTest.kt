@@ -1,7 +1,5 @@
 package com.tgt.trans.dmo
 
-import com.tgt.trans.dmo.SynchronizedRunner.Companion.runInSync
-import com.tgt.trans.dmo.util.getTestJdbi
 import io.kotest.core.spec.style.StringSpec
 import mu.KotlinLogging
 import org.postgresql.util.PSQLException
@@ -10,7 +8,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 
-// paste into shipping-durations
+// paste into some other repo
 
 class KonkurrencyTest: StringSpec() {
     private val jdbi = getTestJdbi()

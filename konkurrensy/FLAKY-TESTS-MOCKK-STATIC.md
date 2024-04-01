@@ -32,4 +32,4 @@ We might create a few unit tests that mock `LocalDate.now()` and look like this:
       nextMonday() shouldBe monday
   }
 ```
-In isolation, this test will pass. But if we have another function named `daysToDeadline()`, and it also uses `LocalDate.now()` under the hood, then the unit tests for it might also mock the same `LocalDate.now()`. 
+In isolation, this test will pass. But if we have another function named `daysToDeadline()`, and it also uses `LocalDate.now()` under the hood, then the unit tests for it might also mock the same `LocalDate.now()`. So when we run 

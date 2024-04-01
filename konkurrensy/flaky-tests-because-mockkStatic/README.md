@@ -38,9 +38,13 @@ In isolation, this test will pass. But if we have another function named `daysTo
 
 ## Reproducing Race Conditions May Be Tricky
 
-We have just discussed a situation when two unit tests have a race condition. In many cases it is really difficult to reliably reproduce such race conditions. Of course, we can just run tests multiple times and hope that eventually it will happen.
+We have just discussed a situation when two unit tests have a race condition. In many cases it is really difficult to reliably reproduce such race conditions. Of course, we can just run tests multiple times and hope that eventually that elusive race condition will happen.
+<br />
 <br />
 This is slow and inefficient. 
 <br />
-In many cases there is a faster way, so let me show you how.
+<br />
+In many cases there are faster ways to reproduce, which work right away, 100% of the time. Let's have a look at two examples.
+
+
 

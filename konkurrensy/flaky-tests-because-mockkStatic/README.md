@@ -44,7 +44,9 @@ We have just discussed a situation when two unit tests have a race condition. In
 This is slow and inefficient. 
 <br />
 <br />
-In many cases there are faster ways to reproduce, which work right away, 100% of the time. Let's have a look at two examples.
+In many cases there are faster ways to reproduce race conditions, which consistently work right away. Let's have a look at two examples.
+
+## Reproduce 
 
 
 

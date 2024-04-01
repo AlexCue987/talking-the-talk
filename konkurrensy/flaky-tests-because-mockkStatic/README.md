@@ -1,4 +1,4 @@
-## When Mocking Static Functions Causes Flake Tests
+## When Mocking Static Functions Causes Tests to Fail Intermittently
 
 ### The Problem
 

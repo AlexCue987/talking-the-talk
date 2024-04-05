@@ -4,7 +4,7 @@
 
 Sometimes our automated tests intermittently fail. For example, the following can happen:
 * We've created a new class and made no other changes. Yet all of a sudden an old unchanged test fails, for a class we have not touched.
-* Tests are passing locally but failing on the CI server. Yet when we rerun them on the server, they pass.
+* Tests are passing locally but failing on the CI server. Yet when we rerun the same tests on the same server again, they pass.
 
 There are multiple reasons that may cause our tests to be flaky. We'll discuss just one of them.
 

@@ -34,19 +34,75 @@ We might create a few unit tests that mock `LocalDate.now()` and look like this:
       nextMonday() shouldBe monday
   }
 ```
-In isolation, this test will pass. But if we have another function named `daysToDeadline()`, and it also uses `LocalDate.now()` under the hood, then the unit tests for it might also mock the same `LocalDate.now()`. So when we run all tests, unit tests for `nextMonday()` might run at the same time as `daysToDeadline()`, and we just got a collision and failing unit test(s). Soon we shall reproduce the problem.
+In isolation, this test will pass. But if we have another function named `daysToDeadline()`, and it also uses `LocalDate.now()` under the hood, as follows:
 
-## Reproducing Race Conditions May Be Tricky
+```kotlin
+fun daysToNextNewYear(): Long {
+    val today = LocalDate.now()
+    val nextNewYear = LocalDate.of(today.year + 1, 1, 1)
+    return ChronoUnit.DAYS.between(today, nextNewYear)
+}
+```
+then the unit tests for it might also mock the same `LocalDate.now()`. Without mocking the following test will pass during one day of the year, April 5th:
+```kotlin
+"daysToNextNewYear" {
+    daysToNextNewYear() shouldBe 271L
+}
+```
 
-We have just discussed a situation when two unit tests have a race condition. In many cases it is really difficult to reliably reproduce such race conditions. Of course, we can just run tests multiple times and hope that eventually that elusive race condition will happen.
-<br />
-<br />
-This is slow and inefficient. 
-<br />
-<br />
-In many cases there are faster ways to reproduce race conditions, which consistently work right away. Let's have a look at two examples.
+So when we run all tests, unit tests for `nextMonday()` might run at the same time as `daysToNextNewYear()`, and we just got a collision and failing unit test(s). Soon we shall reproduce the problem.
 
-## Reproduce 
+## Reproducing Race Condition Between Unit Tests
+
+Let's use `sdf` which was discussed here. The following code shows one possible collision, when the mocking for function `daysToNextNewYear` overrides previous mock for function `nextMonday`:
+```koltin
+        "demo for mockkStatic - mocking on one thread overrides mocking on another thread".config(enabled = true) {
+            RaceConditionReproducer.runInParallel({ runner: RaceConditionReproducer ->
+                    mockkStatic(LocalDate::class)
+                    val today = LocalDate.of(2022, 4, 27)
+                    every { LocalDate.now(any<Clock>()) } returns today
+                    timedPrint("After mock on first thread: ${LocalDate.now().toString()}")
+                //Time: 2024-04-05T14:08:01.920182, Thread: 50, After mock on first thread: 2022-04-27
+                    runner.await()
+                    runner.await()
+                    timedPrint(
+                        "After mock on first thread was overridden on second thread: ${
+                            LocalDate.now().toString()
+                        }"
+                    )
+                //Time: 2024-04-05T14:08:01.991910, Thread: 50, After mock on first thread was overridden on second thread: 2024-04-04
+                },
+                { runner: RaceConditionReproducer ->
+                    runner.await()
+                    timedPrint(
+                        "Before mock on second thread, LocalDate.now() was mocked on first thread: ${
+                            LocalDate.now().toString()
+                        }"
+                    )
+                    //Time: 2024-04-05T14:08:01.974678, Thread: 51, Before mock on second thread, LocalDate.now() was mocked on first thread: 2022-04-27
+                    mockkStatic(LocalDate::class)
+                    val today = LocalDate.of(2024, 4, 4)
+                    every { LocalDate.now(any<Clock>()) } returns today
+                    timedPrint(
+                        "After mock on second thread has overridden previous mocking: ${
+                            LocalDate.now().toString()
+                        }"
+                    )
+                    //Time: 2024-04-05T14:08:01.988905, Thread: 51, After mock on second thread has overridden previous mocking: 2024-04-04
+                    runner.await()
+                }
+            )
+            /* The full output from this test:
+Time: 2024-04-05T14:08:01.920182, Thread: 50, After mock on first thread: 2022-04-27
+Time: 2024-04-05T14:08:01.974678, Thread: 51, Before mock on second thread, LocalDate.now() was mocked on first thread: 2022-04-27
+Time: 2024-04-05T14:08:01.988905, Thread: 51, After mock on second thread has overridden previous mocking: 2024-04-04
+Time: 2024-04-05T14:08:01.991910, Thread: 50, After mock on first thread was overridden on second thread: 2024-04-04
+             */
+        }
+
+```
+
+## Fixing the Problem
 
 
 

@@ -140,7 +140,9 @@ class MyService {
     }
 }
 ```
-wrap static function in a class named `DateFactory`, which can be easily mocked
+
+wrap static function in a class named `DateFactory`, instances of which can be easily mocked:
+
 ```kotlin
 class DateFactory {
     fun today() = LocalDate.now()

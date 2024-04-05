@@ -105,5 +105,70 @@ Time: 2024-04-05T14:08:01.991910, Thread: 50, After mock on first thread was ove
 
 ## Fixing the Problem
 
+There are several ways to deal with this issue.
+
+### Pass A Parameter
+
+Instead of 
+
+```kotlin
+fun daysToNextNewYear(): Long {
+    val today = LocalDate.now()
+    val nextNewYear = LocalDate.of(today.year + 1, 1, 1)
+    return ChronoUnit.DAYS.between(today, nextNewYear)
+}
+```
+we can pull today up as follows:
+
+```kotlin
+fun daysToNextNewYear(today: LocalDate): Long {
+    val nextNewYear = LocalDate.of(today.year + 1, 1, 1)
+    return ChronoUnit.DAYS.between(today, nextNewYear)
+}
+```
+This removes the need to mock `LocalDate.now()`.
+
+### Use An Injectable Class
+
+Instead of
+```kotlin
+class MyService {
+    fun daysToNextNewYear(): Long {
+        val today = LocalDate.now()
+        val nextNewYear = LocalDate.of(today.year + 1, 1, 1)
+        return ChronoUnit.DAYS.between(today, nextNewYear)
+    }
+}
+```
+wrap static function in a class named `DateFactory`, which can be easily mocked
+```kotlin
+class DateFactory {
+    fun today() = LocalDate.now()
+}
+class MyService(
+    private val dateFactory: DateFactory
+) {
+    fun daysToNextNewYear(): Long {
+        val today = dateFactory.today()
+        val nextNewYear = LocalDate.of(today.year + 1, 1, 1)
+        return ChronoUnit.DAYS.between(today, nextNewYear)
+    }
+}
+```
+
+### Make Sure Tests Do Not Run In Parallel
+
+For example:
+```kotlin
+@DoNotParallelize
+class DaysToNextNewYearTest: StringSpec() {
+    init {
+        "daysToNextNewYear" {
+            daysToNextNewYear() shouldBe 271L
+        }
+    }
+}
+```
+We need to use this annotation sparingly, as it slows down testing.
 
 

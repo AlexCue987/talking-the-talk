@@ -12,6 +12,7 @@ But there are tools that make this task easier, such as the `RaceConditionReprod
 For example, let us try to reproduce a deadlock with `RaceConditionReproducer`. Let's suppose we are working with Postgres. 
 <br/>
 The following two database updates can embrace in a deadlock, if they start at more or less the same time. Both touch the same two tables in a transaction, in opposite order. The first update touches table `apples` and then table `oranges`:
+
 ```kotlin
 useTransaction {
     runSql("UPDATE apples SET weight = 3.4 WHERE id = 1")
@@ -37,6 +38,7 @@ Alternatively, we can use a helper class `RaceConditionReproducer` that will rep
 <br/>
 <br/>
 The following code uses `RaceConditionReproducer` to reliably reproduce the deadlock. Note: when `await()` is invoked from a thread, the thread starts waiting for the other thread to catch up. Once both threads have invoked `await()`, they both proceeed.
+
 ```kotlin
 runInParallel(
     { runner: ParallelRunner ->

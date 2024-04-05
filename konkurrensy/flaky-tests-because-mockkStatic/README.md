@@ -36,7 +36,7 @@ We might create a few unit tests that mock `LocalDate.now()` and look like this:
       nextMonday() shouldBe monday
   }
 ```
-In isolation, this test will pass. But if we have another function named `daysToDeadline()`, and it also uses `LocalDate.now()` under the hood, as follows:
+In isolation, this test will pass. But let's suppose that we have another function named `daysToNextNewYear()`, and it also uses `LocalDate.now()` under the hood, as follows:
 
 ```kotlin
 fun daysToNextNewYear(): Long {
@@ -45,14 +45,17 @@ fun daysToNextNewYear(): Long {
     return ChronoUnit.DAYS.between(today, nextNewYear)
 }
 ```
-then the unit tests for it might also mock the same `LocalDate.now()`. Without mocking the following test will pass during one day of the year, April 5th:
+Of course, the unit tests for `daysToNextNewYear()` might also mock the same `LocalDate.now()`. For example:
 ```kotlin
 "daysToNextNewYear" {
-    daysToNextNewYear() shouldBe 271L
+      mockkStatic(LocalDate::class)
+      val today = LocalDate.of(2024, 4, 5)
+      every { LocalDate.now(any<Clock>()) } returns today
+      daysToNextNewYear() shouldBe 271L
 }
 ```
 
-So when we run all tests, unit tests for `nextMonday()` might run at the same time as `daysToNextNewYear()`, and we just got a collision and failing unit test(s). Soon we shall reproduce the problem.
+So when we run all tests, unit tests for `nextMonday()` might run at the same time as `daysToNextNewYear()`, and we can get a collision and failing unit test(s). Let us reproduce the problem.
 
 ## Reproducing Race Condition Between Unit Tests
 

@@ -37,18 +37,18 @@ Alternatively, we can use a helper class `RaceConditionReproducer` that will rep
 * We are sure one transaction will become deadlock victim, but we don't know which one - it's Postgres's decision.
 <br/>
 <br/>
-The following code uses `RaceConditionReproducer` to reliably reproduce the deadlock. Note: when `await()` is invoked from a thread, the thread starts waiting for the other thread to catch up. Once both threads have invoked `await()`, they both proceeed.
+The following code uses `RaceConditionReproducer` to reliably reproduce the deadlock. Note: when `runner.await()` is invoked from a thread, the thread starts waiting for the other thread to catch up. Once both threads have invoked `runner.await()`, they both proceeed, and immediate embrace in a deadlock.
 
 ```kotlin
 runInParallel(
-    { runner: ParallelRunner ->
+    { runner: RaceConditionReproducer ->
         useTransaction {
             runSql("UPDATE apples SET weight = 3.4 WHERE id = 1")
             runner.await()
             runSql("UPDATE oranges SET weight = 3.2 WHERE id = 1")
         }
     },
-    { runner: ParallelRunner ->
+    { runner: RaceConditionReproducer ->
         useTransaction {
             runSql("UPDATE oranges SET weight = 3.2 WHERE id = 1")
             runner.await()

@@ -57,3 +57,6 @@ runInParallel(
     }
 )
 ```
+The complete code for `RaceConditionReproducer` is [here](https://github.com/AlexCue987/talking-the-talk/blob/main/konkurrensy/reproduce-race-conditions/RaceConditionReproducer.kt)
+<br/>
+And there are a [few simple examples of its usage]([RaceConditionReproducer](https://github.com/AlexCue987/talking-the-talk/blob/main/konkurrensy/reproduce-race-conditions/RaceConditionReproducerTest.kt)

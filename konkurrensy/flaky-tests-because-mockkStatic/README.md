@@ -12,7 +12,9 @@ There are multiple reasons that may cause our tests to be flaky. We'll discuss j
 
 Whenever we mock a static function, such as `LocalDate.now()`, in a test, it can affect all other tests running at the same time. 
 <br />
+<br />
 The reason is simple: because generally multiple tests are run in parallel, some other tests should be running at the same time with our test. If these other tests invoke the same static function, they will get mock response instead of the real thing and so they will break. If, on the other hand, some other test also mocks the same function, that other mock will override the previous one, and our original test will fail.
+<br />
 <br />
 For example, suppose we need to unit test the following function, which uses static function `LocalDate.now()`:
 

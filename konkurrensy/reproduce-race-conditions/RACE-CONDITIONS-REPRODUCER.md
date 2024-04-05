@@ -25,4 +25,7 @@ useTransaction {
     runSql("UPDATE apples SET weight = 3.4 WHERE id = 1")
 }
 ```
-If we repeatedly run these two transactions from two different threads at the same time, we shoule eventually get a deadlock. 
+If we repeatedly run these two transactions from two different threads at the same time, we should eventually get a deadlock. But we don't know how many iterations it will take.
+<br/>
+<br/>
+Alternatively, we can use a helper class `RaceConditionReproducer` that will reproduce a deadlock every time. The most important method of this class is `await()` - it  

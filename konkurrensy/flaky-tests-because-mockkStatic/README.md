@@ -59,7 +59,7 @@ So when we run all tests, unit tests for `nextMonday()` might run at the same ti
 
 ## Reproducing Race Condition Between Unit Tests
 
-Let's use `RaceConditionReproducer` which was [discussed here](https://github.com/AlexCue987/talking-the-talk/blob/main/konkurrensy/reproduce-race-conditions/RACE-CONDITIONS-REPRODUCER.md). The following code shows one possible collision, when the mocking for function `daysToNextNewYear` overrides previous mock for function `nextMonday`:
+Let's use `RaceConditionReproducer` which was [discussed here](https://github.com/AlexCue987/talking-the-talk/blob/main/konkurrensy/reproduce-race-conditions/RACE-CONDITIONS-REPRODUCER.md). The following code shows one possible collision, when the mocking for function `daysToNextNewYear` overrides previous mock for function `nextMonday`. Every time `runner.await()` is invoked from a thread, it waits until every thread has invoked it. As a result the output shows that `mockkStatic(LocalDate::class)` impacts another thread as well:
 
 ```koltin
         "demo for mockkStatic - mocking on one thread overrides mocking on another thread".config(enabled = true) {

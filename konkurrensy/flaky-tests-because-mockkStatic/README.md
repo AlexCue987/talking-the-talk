@@ -123,7 +123,7 @@ fun daysToNextNewYear(): Long {
     return ChronoUnit.DAYS.between(today, nextNewYear)
 }
 ```
-we can pull today up as follows:
+we can pull variable named `today` up into a parameter as follows:
 
 ```kotlin
 fun daysToNextNewYear(today: LocalDate): Long {

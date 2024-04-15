@@ -12,12 +12,17 @@ According to Json standard, [An object is an unordered set of name/value pairs](
 <br/>
 This is why the following test is fragile:
 <br/>
+<br/>
 `getSomeJson() shouldBe """{"name":"apple","color":"red"}"""`
 <br/>
+<br/>
 Because next time this function can return name/value pairs in a different order, like this: <br/>
+<br/>
 `{"color":"red","name":"apple"}`, and the test will fail.
 <br/>
+<br/>
 But logically it is the same json, even though it is a different `String`. So a well written test should still pass even when the order of name/value pairs has changed, like the following.
+<br/>
 <br/>
 `getSomeJson() shouldMatchJson """{"name":"apple","color":"red"}"""`
 <br/>

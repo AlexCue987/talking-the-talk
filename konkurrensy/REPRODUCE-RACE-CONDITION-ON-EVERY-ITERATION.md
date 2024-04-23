@@ -26,4 +26,5 @@ Or a more moderate example, when every buyer tries to buy tickets with random nu
 The following example shows how to reproduce race conditions easier and faster.
 <br/>
 <br/>
-### 
+### Using `CyclicBarrier` to Reproduce Race Conditions on Every Iteration
+

@@ -28,9 +28,10 @@ The following example shows how to reproduce race conditions easier and faster.
 <br/>
 <br/>
 ### Using `CyclicBarrier` to Reproduce Race Conditions on Every Iteration
+<br/>
 Using a simple tool, we shall accomplish the following
  * all tickets were sold once
  * no tickets were sold twice
  * there were no exceptions
- * both buyers tried to acquire every ticket at more or less the same time. In other words, the intervals of time from requesting a ticket to either getting it or 
+ * both buyers tried to acquire every ticket at more or less the same time. In other words, the intervals of time between requesting a ticket and getting either the ticket or rejection mostly overlap.
 

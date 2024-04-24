@@ -7,13 +7,14 @@ And the reason is simple: our tests might not produce enough race conditions to 
 And once the system is running in production, eventually reality will reproduce enough race conditions, and we shall see that bug.
 <br/>
 <br/>
-Suppose, for example, that we are building an system that sells tickets, and it passes all unit test. In other words, it works without concurrency. Suppose that we have:
+Suppose, for example, that we are building an system that sells tickets, and it passes all unit tests. In other words, it works without concurrency. Suppose that we have:
 * started two threads
 * have those threads buy 100K or 1M tickets, concurrently
 * verified the results as follows:
     * all tickets were sold once
     * no tickets were sold twice
     * there were no exceptions
+<br/>
 So all our checks have passed. Does it mean that the system is good to go? Not necessarily. There is still a possibility that our test did not reproduce enough race conditions.
 <br/>
 <br/>
@@ -27,4 +28,9 @@ The following example shows how to reproduce race conditions easier and faster.
 <br/>
 <br/>
 ### Using `CyclicBarrier` to Reproduce Race Conditions on Every Iteration
+Using a simple tool, we shall accomplish the following
+ * all tickets were sold once
+ * no tickets were sold twice
+ * there were no exceptions
+ * both buyers tried to acquire every ticket at more or less the same time. In other words, the intervals of time from requesting a ticket to either getting it or 
 

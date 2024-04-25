@@ -1,4 +1,4 @@
-## Reproducing Race Condition on Every Iteration
+## DRAFT - Reproducing Race Condition on Every Iteration
 ### Why Is That A Problem
 Whenever we are building a robust system, we need to consider concurrency and race conditions. 
 Otherwise we can end up with a system that passes all unit tests, it can have up to 100% test coverage, and yet have subtle bugs related to concurrency.
@@ -34,3 +34,95 @@ Using a simple tool, we shall accomplish the following
  * there were no exceptions
  * both buyers tried to acquire every ticket at more or less the same time. In other words, the intervals of time between requesting a ticket and getting either the ticket or rejection mostly overlap.
 
+```kotlin
+import io.kotest.assertions.assertSoftly
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
+import kotlin.concurrent.thread
+
+class SynchronizedRunnerTest: StringSpec() {
+    init {
+        "just buy tickets concurrently" {
+            val count = 10000
+            val acquiredTickets = List(2) { mutableListOf<Int>() }
+            val seller = NonThreadSafeTicketsSeller(count)
+            val threads = listOf(0, 1).map { runnerIndex ->
+                thread {
+                    (0 until count).forEach { iteration ->
+                        if (seller.getTicket(iteration)) {
+                            acquiredTickets[runnerIndex].add(iteration)
+                        }
+                    }
+                }
+            }
+            threads.forEach { it.join() }
+            assertSoftly {
+                acquiredTickets.sumOf { it.size } shouldBe count
+                acquiredTickets[0].filter { it in acquiredTickets[1] } shouldBe listOf()
+            }
+        }
+        
+        "invoke non-thread safe implementation" {
+            val count = 10000
+            val acquiredTickets = List(2) { mutableListOf<Int>() }
+            val seller = NonThreadSafeTicketsSeller(count)
+            val buyTicket = { runnerIndex: Int, iteration: Int ->
+                if (seller.getTicket(iteration)) {
+                    acquiredTickets[runnerIndex].add(iteration)
+                }
+            }
+            SynchronizedRunner.runInSync(count, buyTicket, buyTicket)
+            assertSoftly {
+                acquiredTickets.sumOf { it.size } shouldBe count
+                acquiredTickets[0].filter { it in acquiredTickets[1] } shouldBe listOf()
+            }
+        }
+    }
+}
+
+class NonThreadSafeTicketsSeller(
+    val count: Int
+) {
+    private val ticketsAvaiability = MutableList(count) { true }
+    fun getTicket(index: Int): Boolean {
+        require(index in 0 until count) { "Invalid index: $index" }
+        return ticketsAvaiability[index].also {
+            ticketsAvaiability[index] = false
+        }
+    }
+}
+
+import java.util.concurrent.CyclicBarrier
+import java.util.concurrent.TimeUnit
+import kotlin.concurrent.thread
+
+class SynchronizedRunner(
+    private val timeoutInMs: Long,
+    vararg tasks: (runnerIndex: Int, iteration: Int) -> Unit) {
+    private val tasks = tasks.toList()
+    private val barrier = CyclicBarrier(tasks.size)
+
+    constructor(vararg tasks: (runnerIndex: Int, iteration: Int) -> Unit): this(1000L, *(tasks))
+
+    fun run(count: Int) {
+        val threads = tasks.mapIndexed { runnerIndex, task ->
+            thread(start = false) {
+                repeat(count) { iteration ->
+                    await()
+                    task(runnerIndex, iteration)
+                }
+            }
+        }
+        threads.forEach { it.start() }
+        threads.forEach { it.join() }
+    }
+
+    fun await() = barrier.await(timeoutInMs, TimeUnit.MILLISECONDS)
+
+    companion object {
+        fun runInSync(count: Int, vararg tasks: (runnerIndex: Int, iteration: Int) -> Unit) {
+            SynchronizedRunner(*(tasks)).run(count)
+        }
+    }
+}
+```

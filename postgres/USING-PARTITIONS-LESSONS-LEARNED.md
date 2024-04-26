@@ -23,4 +23,6 @@ Using partitions, we can:
 <br/>
 Load new data, but still use old data:
 <img src="upload-to-new-partition.png" />
+Then switch to the new partition:
+<img src="after-upload.png" />
 

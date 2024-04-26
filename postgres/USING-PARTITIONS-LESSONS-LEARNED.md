@@ -21,4 +21,4 @@ Using partitions, we can:
 * Switch to using new partition
 * Drop old partition - no work for `VACUUM`
 <br/>
-![Loading Data into New Partition While API Still Uses Old One](upload-to-new-partition.png)
+![Alt text](upload-to-new-partition.png?raw=true "Loading Data into New Partition While API Still Uses Old One")

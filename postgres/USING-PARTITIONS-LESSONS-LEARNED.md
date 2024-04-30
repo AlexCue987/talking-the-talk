@@ -26,6 +26,15 @@ Load new data, but still use old data:
 Then switch to the new partition:
 <img src="after-upload.png" />
 
+### Pro: Create Index with Little Downtime
+
+#### Without Partitions, Creating New Index on Large Table Is Tricky
+* Just run `CREATE INDEX` - blocks table for write, can be a long time
+* Try creating index with `CONCURRENT` - it can fail, again and again. And it will use lots of resources every time.
+* Create new table with new index. Eventually migrate to it. Lots of work.
+
+  
+
 ### Con: Some queries are slower
 
 Suppose we have an index that does not include column(s) we partition on:

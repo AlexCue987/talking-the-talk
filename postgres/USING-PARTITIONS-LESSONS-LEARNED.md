@@ -26,3 +26,12 @@ Load new data, but still use old data:
 Then switch to the new partition:
 <img src="after-upload.png" />
 
+### Con: Some queries are slower
+
+Suppose we have an index that does not include column(s) we partition on:
+```
+CREATE INDEX things__id ON things(thing_id)
+```
+Also suppose that `thing_id` is highly selective, which means that usually only one row matches any given `thing_id`.
+<br\>
+Because Postgres does not know which partition the rows we are looking for are stored in. So it will query all partitions

@@ -63,28 +63,28 @@ CREATE UNIQUE INDEX events__another_id ON events(another_id)
 ```
 The reason is simple: under the hood every partition is essentially a table, and Postgres creates a separate index on every partition. The image below shows an index on a table with two partitions.
 <img src="images/index-on-partitioned-table.png" /> 
-<br\>
+<br/>
 This is why Postgres can only guarantee uniqueness within one partition.
-<br\>
-<br\>
+<br/>
+<br/>
 Now we can discuss why some queries against partitioned tables are slower. For example, suppose that `another_id` is highly selective, which means that usually only one row matches any given `another_id`. In other words, both values retrieved by the following query are the same:
 ```sql
 SELECT COUNT(*), COUNT(DISTINCT another_id) FROM events
 ```
-<br\>
-<br\>
+<br/>
+<br/>
 Let's see how Postgres satisfies the following query:
 ```sql
 SELECT * FROM events WHERE another_id = '34563456'
 ```
 Postgres does not know in which partitions to search for the matching rows. So it will query all partitions, as we can see in the following execution plan:
 <img src="images/lookup-on-partitions.png" />  
-<br\>
-<br\>
+<br/>
+<br/>
 If we store the same data in a table without partitions, the same query is much faster:
 <img src="images/lookup-on-table.png" />  
-<br\>
-<br\>
+<br/>
+<br/>
 Note that even though every partition is smaller that the un-partitioned table, the cost of one lookup via index may be the same against the big table and against the much smaller partition. This is because the cost of lookup is essentially the number of pages to read, starting from the root of the index, and all the way to the underlying table. This number of pages is also called index depth. And index depth may be the same for tables with very different sizes. And even if index depth is different, that results in a small change in query cost. For instance, the cost on one lookup against this larger table is three page reads:
 <img src="images/bigger-table.png" />  
 And it takes two page reads to get to the row if the table is much smaller:

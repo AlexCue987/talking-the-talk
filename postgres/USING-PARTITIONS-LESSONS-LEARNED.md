@@ -8,6 +8,8 @@
 * Some queries are slower
 * More difficult to ensure uniqueness
 * More difficult to implement `UPSERT` aka `INSERT ... ON CONFLICT(...) DO UPDATE`
+* Race condition possible when creating same partition from multiple threads/pods
+  
 ### Pro: No VACUUM Overhead After Dropping A Partition
 This is the main reason we are using partitions. Dropping a partition does not add any work for `VACUUM`. We've had databases that were written to and read from 24/7, but at leat 90% of the resources were spent on deleting old data. So switching to partitions rendered those databases from very busy to mostly idle.
 ### Pro: Large Data Loads Done Without Much Impact on Server's Performance

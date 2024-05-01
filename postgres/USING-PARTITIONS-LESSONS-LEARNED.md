@@ -62,7 +62,7 @@ We cannot create a unique index, unless it includes all the columns we partition
 CREATE UNIQUE INDEX events__another_id ON events(another_id)
 ```
 The reason is simple: under the hood every partition is essentially a table, and Postgres creates a separate index on every partition. The image below shows an index on a table with two partitions.
-<img src="images/Index-on-partitioned-table.png" /> 
+<img src="images/index-on-partitioned-table.png" /> 
 As such, it can only guarantee uniqueness within one partition.
 
 Now we can discuss why some queries against partitioned tables are slower. Suppose that `another_id` is highly selective, which means that usually only one row matches any given `another_id`.

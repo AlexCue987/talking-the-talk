@@ -116,6 +116,19 @@ And it takes two page reads to get to the row if the table is much smaller:
 
 ### Con: More difficult to ensure uniqueness
 
+Without the ability to create a `UNIQUE` index, we cannot just write an `INSERT` and expect it to fail if the unique value already is in the table. We need to write a `WHERE` clause, and to up isolation level:
+
+```sql
+INSERT INTO events(event_date, another_id, description)
+SELECT :event_date, :another_id, :description
+WHERE NOT EXISTS(
+    SELECT * FROM events
+    WHERE another_id = :another_id
+)
+```
+
+Likewise, we cannot use `INSERT ... ON CONFLICT(...) DO UPDATE SET...` - we need to write a transaction that includes an `INSERT` and an `UPDATE`, and to use higher isolation level.
+
 ## Appendix. Scripts to Populate Tables
 
 ```sql

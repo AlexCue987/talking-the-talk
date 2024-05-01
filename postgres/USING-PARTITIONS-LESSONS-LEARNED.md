@@ -56,7 +56,16 @@ And we have an index that does not include the column the table is partitioned o
 ```sql
 CREATE INDEX events__another_id ON events(another_id)
 ```
-Also suppose that `another_id` is highly selective, which means that usually only one row matches any given `another_id`.
+**Note:**
+We cannot create a unique index, unless it includes all the columns we partition the table on. The following DDL fails:
+```sql
+CREATE UNIQUE INDEX events__another_id ON events(another_id)
+```
+The reason is simple: under the hood every partition is essentially a table, and Postgres creates a separate index on every partition. The image below shows an index on a table with two partitions.
+<img src="images/Index-on-partitioned-table.png" /> 
+As such, it can only guarantee uniqueness within one partition.
+
+Now we can discuss why some queries against partitioned tables are slower. Suppose that `another_id` is highly selective, which means that usually only one row matches any given `another_id`.
 <br\>
 Let's see how Postgres satisfies the following query:
 ```sql

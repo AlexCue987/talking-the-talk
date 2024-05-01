@@ -33,7 +33,7 @@ Then switch to the new partition:
 * Try creating index with `CONCURRENT` - it can fail, again and again. And it will use lots of resources every time.
 * Create new table with new index. Eventually migrate to it. Lots of work.
 
-<img src="images/move-to-new-table.png" />  
+<img src="images/write-to-two-tables.png" />  
 
 * Have API writing to both old and new tables
 * Move all data from old table to new, slowly, not impacting performance

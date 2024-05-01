@@ -30,7 +30,7 @@ Then switch to the new partition:
 
 #### Without Partitions, Creating New Index on Large Table Is Tricky
 * Just run `CREATE INDEX` - blocks table for write, can be a long time
-* Try creating index with `CONCURRENT` - it can fail, again and again. And it will use lots of resources every time.
+* Try creating index with `CONCURRENTLY` - it can fail, again and again. And it will use lots of resources every time.
 * Create new table with new index. Eventually migrate to it. Lots of work.
 
 <img src="images/write-to-two-tables.png" />  

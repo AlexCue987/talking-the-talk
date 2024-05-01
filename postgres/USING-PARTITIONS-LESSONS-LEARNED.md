@@ -72,6 +72,7 @@ Now we can discuss why some queries against partitioned tables are slower. For e
 SELECT COUNT(*), COUNT(DISTINCT another_id) FROM events
 ```
 <br\>
+<br\>
 Let's see how Postgres satisfies the following query:
 ```sql
 SELECT * FROM events WHERE another_id = '34563456'

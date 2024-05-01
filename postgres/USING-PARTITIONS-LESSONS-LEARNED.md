@@ -77,14 +77,17 @@ Let's see how Postgres satisfies the following query:
 SELECT * FROM events WHERE another_id = '34563456'
 ```
 Postgres does not know in which partitions to search for the matching rows. So it will query all partitions, as we can see in the following execution plan:
---lookup-on-partitions
+<img src="images/lookup-on-partitions.png" />  
 <br\>
 <br\>
 If we store the same data in a table without partitions, the same query is much faster:
---lookup-on-table
+<img src="images/lookup-on-table.png" />  
 <br\>
 <br\>
-
+Note that even though every partition is smaller that the un-partitioned table, the cost of one lookup via index may be the same against the big table and against the much smaller partition. This is because the cost of lookup is essentially the number of pages to read, starting from the root of the index, and all the way to the underlying table. This number of pages is also called index depth. And index depth may be the same for tables with very different sizes. And even if index depth is different, that results in a small change in query cost. For instance, the cost on one lookup against this larger table is three page reads:
+<img src="images/bigger-table.png" />  
+And it takes two page reads to get to the row if the table is much smaller:
+<img src="images/three-pages.png" /> 
 ## Appendix. Scripts to Populate Tables
 
 ```sql

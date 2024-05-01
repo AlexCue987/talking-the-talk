@@ -42,11 +42,24 @@ Then switch to the new partition:
 * Drop old table
 
 ### Con: Some queries are slower
-
-Suppose we have an index that does not include column(s) we partition on:
+Suppose that we have the following partitioned table:
+```sql
+CREATE TABLE events(
+	id SERIAL NOT NULL,
+	event_date DATE NOT NULL,
+    CONSTRAINT pk__events PRIMARY KEY (event_date, id),
+	another_id TEXT NOT NULL,
+	description TEXT NOT NULL
+) PARTITION BY LIST (event_date);
 ```
-CREATE INDEX things__id ON things(thing_id)
+And we have an index that does not include the column the table is partitioned on:
 ```
-Also suppose that `thing_id` is highly selective, which means that usually only one row matches any given `thing_id`.
+CREATE INDEX events__another_id ON events(another_id)
+```
+Also suppose that `another_id` is highly selective, which means that usually only one row matches any given `another_id`.
 <br\>
-Because Postgres does not know which partition the rows we are looking for are stored in. So it will query all partitions
+Let's see how Postgres satisfies the following query:
+```sql
+SELECT * FROM events WHERE another_id = '34563456'
+```
+Postgres does not know in which partitions to search for the matching rows. So it will query all partitions

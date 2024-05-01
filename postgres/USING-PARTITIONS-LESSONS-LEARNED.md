@@ -40,6 +40,14 @@ Then switch to the new partition:
 * Verify that both tables are in sync
 * Switch to reads from new table
 * Drop old table
+* A LOT OF WORK!
+
+#### Avoiding Downtime With Partitions - Less Work
+
+* One partition per day
+* Mostly used during first day
+* Slightly used for 1-2 days more
+* Need to keep for 45 days
 
 ### Con: Some queries are slower
 Suppose that we have the following partitioned table:
@@ -72,11 +80,12 @@ Now we can discuss why some queries against partitioned tables are slower. For e
 SELECT COUNT(*), COUNT(DISTINCT another_id) FROM events
 ```
 <br/>
-<br/>
 Let's see how Postgres satisfies the following query:
+<br/>
 ```sql
 SELECT * FROM events WHERE another_id = '34563456'
 ```
+<br/>
 Postgres does not know in which partitions to search for the matching rows. So it will query all partitions, as we can see in the following execution plan:
 <img src="images/lookup-on-partitions.png" />  
 <br/>

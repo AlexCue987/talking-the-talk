@@ -53,7 +53,7 @@ CREATE TABLE events(
 ) PARTITION BY LIST (event_date);
 ```
 And we have an index that does not include the column the table is partitioned on:
-```
+```sql
 CREATE INDEX events__another_id ON events(another_id)
 ```
 Also suppose that `another_id` is highly selective, which means that usually only one row matches any given `another_id`.
@@ -63,3 +63,77 @@ Let's see how Postgres satisfies the following query:
 SELECT * FROM events WHERE another_id = '34563456'
 ```
 Postgres does not know in which partitions to search for the matching rows. So it will query all partitions
+
+## Appendix. Scripts to Populate Tables
+
+```sql
+CREATE TABLE events(
+	id SERIAL NOT NULL,
+	event_date DATE NOT NULL,
+    CONSTRAINT pk__events PRIMARY KEY (event_date, id),
+	another_id TEXT NOT NULL,
+	description TEXT NOT NULL
+) PARTITION BY LIST (event_date);
+
+CREATE TABLE events__20240501 PARTITION OF events FOR VALUES IN ('2024-05-01');
+CREATE TABLE events__20240502 PARTITION OF events FOR VALUES IN ('2024-05-02');
+
+SELECT 'CREATE TABLE IF NOT EXISTS events__' || to_char(day, 'YYYYmmDD') || 
+' PARTITION OF events FOR VALUES IN (''' || day::TEXT || ''');'
+FROM (
+SELECT ('2024-05-01'::DATE + generate_series) AS day
+FROM generate_series(0, 30)
+	) AS t;
+
+SELECT to_char('2024-05-01'::DATE, 'YYYYmmDD')
+
+INSERT INTO events(event_date, another_id, description)
+SELECT ('2024-05-01'::DATE + e) AS event_date, 
+     'id' || (s*30 + e) AS another_id,
+	 REPEAT('Test', 100) AS description
+FROM generate_series(1, 100000) AS s
+CROSS JOIN generate_series(0, 29) AS e;
+
+SELECT * FROM generate_series(1, 2) AS s
+CROSS JOIN generate_series(0, 3) AS e;
+
+
+SELECT COUNT(*), COUNT(DISTINCT another_id) FROM events;
+
+EXPLAIN ANALYZE
+SELECT * FROM events WHERE another_id = 'id234523'
+
+TRUNCATE TABLE events__20240502
+
+CREATE INDEX events__another_id ON events(another_id);
+
+CREATE TABLE events_without_partitions(
+	id SERIAL NOT NULL,
+	event_date DATE NOT NULL,
+    CONSTRAINT pk__events_without_partitions PRIMARY KEY (event_date, id),
+	another_id TEXT NOT NULL,
+	description TEXT NOT NULL
+);
+
+INSERT INTO events_without_partitions(event_date, another_id, description)
+SELECT ('2024-05-01'::DATE + e) AS event_date, 
+     'id' || (s*30 + e) AS another_id,
+	 REPEAT('Test', 100) AS description
+FROM generate_series(1, 100000) AS s
+CROSS JOIN generate_series(0, 30) AS e;
+
+CREATE INDEX events_without_partitions__another_id ON events_without_partitions(another_id);
+
+TRUNCATE TABLE events_without_partitions
+
+SELECT DATE('2024-05-01') + 30
+
+SELECT COUNT(*), COUNT(DISTINCT another_id) FROM events_without_partitions;
+
+EXPLAIN ANALYZE
+SELECT * FROM events WHERE another_id = 'id234523'
+
+EXPLAIN ANALYZE
+SELECT * FROM events_without_partitions WHERE another_id = 'id234523'
+
+```

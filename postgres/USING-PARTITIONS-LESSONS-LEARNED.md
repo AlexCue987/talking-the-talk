@@ -129,6 +129,12 @@ WHERE NOT EXISTS(
 
 Likewise, we cannot use `INSERT ... ON CONFLICT(...) DO UPDATE SET...` - we need to write a transaction that includes an `INSERT` and an `UPDATE`, and to use higher isolation level.
 
+## Conclusion
+
+* Partitioning is an excellent tool, really useful in some cases,
+* Not a good fit for all sitaution - only use when needed, and when benefits are higher than costs.
+* Our team sometimes deliberately does not use partitions, even when tables are large and need purging. 
+
 ## Appendix. Scripts to Populate Tables
 
 ```sql

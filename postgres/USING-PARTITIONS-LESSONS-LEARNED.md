@@ -48,6 +48,18 @@ Then switch to the new partition:
 * Mostly used during first day
 * Slightly used for 1-2 days more
 * Need to keep for 45 days
+<br/>
+First, we shall create a new index on empty and idle partition for tomorrow, and wait for tomorrow:
+<br/>
+<img src="images/create-new-index-on-empty-partition.png" />  
+<br/>
+Next, we can create in indexes on all other partitions, we can do it `CONCURRENTLY`. We can repeat if it fails.
+<br/>
+<img src="images/create-indexes-on-older-partitions.png" />  
+<br/>
+Finally, create an index on the whole table and attach indexes on partitions to it. **TODO: provide actual scripts.**
+<br/>
+This is not super easy, but it is way easier that what we had to do without partitions.
 
 ### Con: Some queries are slower
 Suppose that we have the following partitioned table:
@@ -98,6 +110,7 @@ Note that even though every partition is smaller that the un-partitioned table, 
 <img src="images/bigger-table.png" />  
 And it takes two page reads to get to the row if the table is much smaller:
 <img src="images/three-pages.png" /> 
+### Con: More difficult to ensure uniqueness
 ## Appendix. Scripts to Populate Tables
 
 ```sql

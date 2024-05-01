@@ -63,15 +63,27 @@ CREATE UNIQUE INDEX events__another_id ON events(another_id)
 ```
 The reason is simple: under the hood every partition is essentially a table, and Postgres creates a separate index on every partition. The image below shows an index on a table with two partitions.
 <img src="images/index-on-partitioned-table.png" /> 
-As such, it can only guarantee uniqueness within one partition.
-
-Now we can discuss why some queries against partitioned tables are slower. Suppose that `another_id` is highly selective, which means that usually only one row matches any given `another_id`.
+<br\>
+This is why Postgres can only guarantee uniqueness within one partition.
+<br\>
+<br\>
+Now we can discuss why some queries against partitioned tables are slower. For example, suppose that `another_id` is highly selective, which means that usually only one row matches any given `another_id`. In other words, both values retrieved by the following query are the same:
+```sql
+SELECT COUNT(*), COUNT(DISTINCT another_id) FROM events
+```
 <br\>
 Let's see how Postgres satisfies the following query:
 ```sql
 SELECT * FROM events WHERE another_id = '34563456'
 ```
-Postgres does not know in which partitions to search for the matching rows. So it will query all partitions
+Postgres does not know in which partitions to search for the matching rows. So it will query all partitions, as we can see in the following execution plan:
+--lookup-on-partitions
+<br\>
+<br\>
+If we store the same data in a table without partitions, the same query is much faster:
+--lookup-on-table
+<br\>
+<br\>
 
 ## Appendix. Scripts to Populate Tables
 

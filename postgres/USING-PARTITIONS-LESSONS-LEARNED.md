@@ -129,6 +129,18 @@ WHERE NOT EXISTS(
 
 Likewise, we cannot use `INSERT ... ON CONFLICT(...) DO UPDATE SET...` - we need to write a transaction that includes an `INSERT` and an `UPDATE`, and to use higher isolation level.
 
+## Con: Race Conditions When Creating Partitions
+
+The following DDL creates a partition:
+
+```sql
+CREATE TABLE IF NOT EXISTS events__20240501
+    PARTITION OF events
+    FOR VALUES IN ('2024-05-01')
+```
+
+If we run it more than once consequtively, it will succeed every time because of `IF NOT EXISTS` clause. But if we run it concurrently, we can get an exception. We should be aware of this and be ready to ignore it.
+
 ## Conclusion
 
 * Partitioning is an excellent tool, really useful in some cases,

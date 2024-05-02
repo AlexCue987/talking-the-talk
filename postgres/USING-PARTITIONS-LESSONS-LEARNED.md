@@ -116,6 +116,9 @@ Note that even though every partition is smaller that the un-partitioned table, 
 And it takes two page reads to get to the row if the table is much smaller:
 <img src="images/three-pages.png" /> 
 
+* Less partitions: monthly, not daily.
+* Need more storage for faster queries - typical tradeoff, just like indexes.
+
 ### Con: More difficult to ensure uniqueness
 
 Without the ability to create a `UNIQUE` index, we cannot just write an `INSERT` and expect it to fail if the unique value already is in the table. We need to write a `WHERE` clause, and to up isolation level:

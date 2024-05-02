@@ -153,7 +153,7 @@ If we run it more than once consequtively, it will succeed every time because of
 ## Conclusion
 
 * Partitioning is an excellent tool, really useful in some cases,
-* Not a good fit for all sitaution - only use when needed, and when benefits are higher than costs.
+* Not a good fit for all situations - only use when needed, and when benefits are higher than costs.
 * Our team sometimes deliberately does not use partitions, even when tables are large and need purging. 
 
 ## Appendix. Scripts to Populate Tables
@@ -170,6 +170,8 @@ CREATE TABLE events(
 CREATE TABLE events__20240501 PARTITION OF events FOR VALUES IN ('2024-05-01');
 CREATE TABLE events__20240502 PARTITION OF events FOR VALUES IN ('2024-05-02');
 
+-- Generate DDL to create partitions for one month
+
 SELECT 'CREATE TABLE IF NOT EXISTS events__' || to_char(day, 'YYYYmmDD') || 
 ' PARTITION OF events FOR VALUES IN (''' || day::TEXT || ''');'
 FROM (
@@ -177,7 +179,7 @@ SELECT ('2024-05-01'::DATE + generate_series) AS day
 FROM generate_series(0, 30)
 	) AS t;
 
-SELECT to_char('2024-05-01'::DATE, 'YYYYmmDD')
+-- populate partitioned table
 
 INSERT INTO events(event_date, another_id, description)
 SELECT ('2024-05-01'::DATE + e) AS event_date, 
@@ -186,18 +188,13 @@ SELECT ('2024-05-01'::DATE + e) AS event_date,
 FROM generate_series(1, 100000) AS s
 CROSS JOIN generate_series(0, 29) AS e;
 
-SELECT * FROM generate_series(1, 2) AS s
-CROSS JOIN generate_series(0, 3) AS e;
-
+-- verify that `another_id` is essentially unique
 
 SELECT COUNT(*), COUNT(DISTINCT another_id) FROM events;
 
-EXPLAIN ANALYZE
-SELECT * FROM events WHERE another_id = 'id234523'
-
-TRUNCATE TABLE events__20240502
-
 CREATE INDEX events__another_id ON events(another_id);
+
+-- same table structure, no partitions
 
 CREATE TABLE events_without_partitions(
 	id SERIAL NOT NULL,
@@ -215,10 +212,6 @@ FROM generate_series(1, 100000) AS s
 CROSS JOIN generate_series(0, 30) AS e;
 
 CREATE INDEX events_without_partitions__another_id ON events_without_partitions(another_id);
-
-TRUNCATE TABLE events_without_partitions
-
-SELECT DATE('2024-05-01') + 30
 
 SELECT COUNT(*), COUNT(DISTINCT another_id) FROM events_without_partitions;
 

@@ -134,6 +134,10 @@ WHERE NOT EXISTS(
 
 Likewise, we cannot use `INSERT ... ON CONFLICT(...) DO UPDATE SET...` - we need to write a transaction that includes an `INSERT` and an `UPDATE`, and to use higher isolation level.
 
+* This is why partitions are not a good choice for some APIs
+* Sometimes the solution causes more problems than it solves: more complexity, slow selects and modifications
+* Use common sense and benchmarks
+
 ## Con: Race Conditions When Creating Partitions
 
 The following DDL creates a partition:

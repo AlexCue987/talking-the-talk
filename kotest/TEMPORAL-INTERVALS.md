@@ -11,6 +11,10 @@ Introduce an infix function `and` on durations such as `2.minutes` which works l
 (1.days and 2.hours and 3.minutes and 4.seconds and 5.milliseconds).inWholeNanoseconds shouldBe 93_784_005_000_000L
 ```
 
+This is useful when creating intervals of data, as follows: `LocalDate.of(12, 30) plusOrMinus (2.minutes and 30.seconds)`
+<br/>
+Matching against such intervals of time are implemented for the following temporal types:
+
 ### Instant
 
 ```kotlin

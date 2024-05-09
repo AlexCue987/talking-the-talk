@@ -2,6 +2,10 @@
 
 ### DSL to Describe Durations
 
+Introduce an infix function `and` on durations such as `2.minutes` which works like this `2.minutes and 30.seconds`
+. For instance:
+
+
 ```kotlin
 (1.minutes and 1.milliseconds).inWholeNanoseconds shouldBe 60_001_000_000L
 (1.days and 2.hours and 3.minutes and 4.seconds and 5.milliseconds).inWholeNanoseconds shouldBe 93_784_005_000_000L

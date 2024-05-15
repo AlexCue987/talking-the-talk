@@ -73,7 +73,7 @@ OffsetDateTime.of(2023, 11, 14, 1, 2, 0, 0, plusHour) shouldBe
 
 ```kotlin
 val chicagoTimeZone = ZoneId.of("America/Chicago")
-newYorkTimeZone = ZoneId.of("America/New_York")
+val newYorkTimeZone = ZoneId.of("America/New_York")
 
 ZonedDateTime.of(2023, 11, 14, 1, 2, 0, 0, chicagoTimeZone) shouldBe
    (ZonedDateTime.of(2023, 11, 14, 2, 30, 0, 0, newYorkTimeZone) plusOrMinus (30.minutes and 30.seconds))

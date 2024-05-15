@@ -1,4 +1,19 @@
-## New in Kotest: Temporal Intervals
+## New in Kotest: Match Temporal Types With Tolerance
+
+### TL;DR;
+
+Add matchers like this:
+
+```kotlin
+LocalDateTime.of(2024, 5, 15, 1, 1, 30) shouldBe
+               (LocalDateTime.of(2024, 5, 15, 1, 2, 50) plusOrMinus (2.minutes and 30.seconds))
+```
+Support the following types:
+* `Instant`
+* `LocalDateTime`
+* `LocalTime`
+* `OffsetDateTime`
+* `ZonedDateTime`
 
 ### DSL to Describe Durations
 
@@ -19,7 +34,6 @@ Matching against such intervals of time are implemented for the following tempor
 
 ```kotlin
 val currentInstant = Instant.now()
-val hundredNanosAgoInstant = currentInstant.minusNanos(5L)
 val fiveNanosAgoInstant = currentInstant.minusNanos(5L)
 
 currentInstant shouldBe (fiveNanosAgoInstant plusOrMinus 5L.nanoseconds)
@@ -37,7 +51,7 @@ LocalDateTime.of(2023, 11, 14, 1, 1) shouldBe
 ```kotlin
 val onePm = LocalTime.of(13, 0, 0)
 
-onePm shouldBe (LocalTime.of(13, 1, 0) plusOrMinus 2.minutes)
+onePm shouldBe (LocalTime.of(13, 1, 25) plusOrMinus (1.minutes and 30.seconds))
 onePm shouldBe (LocalTime.of(12, 59, 0) plusOrMinus 2.minutes)
 ```
 

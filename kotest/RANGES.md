@@ -28,6 +28,8 @@ The following sections provide examples for all these matchers.
 
 ### `shouldIntersect/shouldNotIntersect`
 
+Range A intersects with range B if at least one element is in both ranges. For example:
+
 ```kotlin
 (1..3) shouldIntersect (3..4)
 (1 until 3) shouldNotIntersect (3..4)

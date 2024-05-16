@@ -28,7 +28,8 @@ Introduce an infix function `and` on durations such as `2.minutes` which works l
 
 This is useful when creating intervals of data, as follows: `LocalDate.of(12, 30) plusOrMinus (2.minutes and 30.seconds)`
 <br/>
-Matching against such intervals of time are implemented for the following temporal types:
+<br/>
+Matching against such intervals of time is implemented for the following temporal types:
 
 ### Instant
 

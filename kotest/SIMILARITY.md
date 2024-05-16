@@ -1,4 +1,4 @@
-## Cannot Find Exact Match? Search For Similarity.
+## Cannot Find Exact Match? Kotest Does Search For Similar Elements.
 
 ### TL;DR;
 
@@ -7,9 +7,6 @@ similarities aka fuzzy matches, as shown in the section
 "Possible matches for missing keys" of the following output, where the
 matcher finds the most similar key:
 ```
-val sweetGreenApple = Fruit("apple", "green", "sweet")
-val sweetGreenPear = Fruit("pear", "green", "sweet")
-
 shouldThrow<AssertionError> {
    mapOf(
       sweetGreenApple to 1
@@ -30,17 +27,17 @@ shouldThrow<AssertionError> {
 |
 | expected: Fruit(name=pear, color=green, taste=sweet),
 |  but was: Fruit(name=apple, color=green, taste=sweet),
-|  fields:
-|  name expected: "pear", but was: "apple"
-|  color = "green"
-|  taste = "sweet"
+|  The following fields did not match:
+|    "name" expected: <"pear">, but was: <"apple">
   """.trimMargin()
 ```
 
 This is implemented for the following matchers:
 
+* `shouldContain`
 * `shouldContainAll`
-* `containExactly`
+* `shouldContainExactly`
+* `shouldContainExactlyInAnyOrder`
 
 
 Below are some examples for these matchers:
@@ -61,4 +58,36 @@ shouldThrowAny {
    |  The following fields did not match:
    |    "color" expected: <"green">, but was: <"red">
 """.trimMargin())
+```
+
+### `shouldContain`
+
+```kotlin
+shouldThrowAny {
+   listOf(sweetGreenApple, sweetGreenPear) shouldContain (sweetRedApple)
+}.shouldHaveMessage(
+   """
+   |Collection should contain element Fruit(name=apple, color=red, taste=sweet) based on object equality; but the collection is [Fruit(name=apple, color=green, taste=sweet), Fruit(name=pear, color=green, taste=sweet)]
+   |PossibleMatches:
+   | expected: Fruit(name=apple, color=green, taste=sweet),
+   |  but was: Fruit(name=apple, color=red, taste=sweet),
+   |  The following fields did not match:
+   |    "color" expected: <"green">, but was: <"red">
+""".trimMargin()
+```
+
+### `shouldContainExactlyInAnyOrder`
+
+```kotlin
+shouldThrow<AssertionError> {
+   listOf(sweetGreenApple, sweetRedApple).shouldContainExactlyInAnyOrder(listOf(sweetGreenApple, sweetGreenPear))
+}.message shouldContain """
+   |Possible matches for unexpected elements:
+   |
+   | expected: Fruit(name=apple, color=green, taste=sweet),
+   |  but was: Fruit(name=apple, color=red, taste=sweet),
+   |  The following fields did not match:
+   |    "color" expected: <"green">, but was: <"red">
+""".trimMargin()
+}
 ```

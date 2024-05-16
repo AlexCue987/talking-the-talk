@@ -2,7 +2,7 @@
 
 ### TL;DR:
 
-Add the following matchers for both `ClosedRange` and `OpenEndRange`:
+Add the following matchers for both `ClosedRange<T>` and `OpenEndRange<T>`:
 
 * `shouldBeIn/shouldNotBeIn`
 * `shouldBeEmpty/shouldNotBeEmpty`

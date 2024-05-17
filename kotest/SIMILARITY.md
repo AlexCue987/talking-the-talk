@@ -19,7 +19,7 @@ listOf(Fruit("pear", "green", "sweet"), Fruit("pear", "green", "sweet"), Fruit("
 Collection should contain [Fruit(name=pear, color=green, taste=sweet), Fruit(name=apple, color=red, taste=sweet), Fruit(name=pear, color=green, taste=sweet)] in any order, but was [Fruit(name=pear, color=green, taste=sweet), Fruit(name=pear, color=green, taste=sweet), Fruit(name=apple, color=green, taste=sweet)]
 ```
 
-This is why we've upgraded some matchers to provide more details describing the mismatch, as follows:
+This is why some matchers now provide more details describing the mismatch, as follows:
 
 ```kotlin
 Some elements were missing: [Fruit(name=apple, color=red, taste=sweet)] and some elements were unexpected: [Fruit(name=apple, color=green, taste=sweet)]
@@ -130,4 +130,4 @@ shouldThrow<AssertionError> {
 
 ## Work In Progress - More Matchers To Be Upgraded Soon
 
-At the time of this writing searching for similar elements is not added in every place where it could make a difference. Only the matchers that made it into the latest release were described in this write-up, the rest are still in the pipeline. So stay tuned for more impovements.
+At the time of this writing searching for similar elements is not added in every place where it could make a difference. Only the matchers that made it into the latest release were described in this write-up, the rest are still in the pipeline. So stay tuned for more improvements.

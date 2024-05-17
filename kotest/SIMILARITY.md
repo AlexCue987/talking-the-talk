@@ -13,8 +13,8 @@ Collection should contain [2, 3, 4, 5] in any order, but was [1, 2, 3, 4]
 But if the elements are instances of data classes with multiple fields, it is not so easy to figure out what exactly is different. In the following example elements have only three fields, and all fields are short, so it is a bit simpler than some real life use cases. Yet it takes time and some scrolling left and right to determine what exactly is different: 
 
 ```kotlin
-            listOf(Fruit("pear", "green", "sweet"), Fruit("pear", "green", "sweet"), Fruit("apple", "green", "sweet")) shouldContainExactlyInAnyOrder
-                listOf(Fruit("pear", "green", "sweet"), Fruit("apple", "red", "sweet"), Fruit("pear", "green", "sweet"))
+listOf(Fruit("pear", "green", "sweet"), Fruit("pear", "green", "sweet"), Fruit("apple", "green", "sweet")) shouldContainExactlyInAnyOrder
+    listOf(Fruit("pear", "green", "sweet"), Fruit("apple", "red", "sweet"), Fruit("pear", "green", "sweet"))
 
 Collection should contain [Fruit(name=pear, color=green, taste=sweet), Fruit(name=apple, color=red, taste=sweet), Fruit(name=pear, color=green, taste=sweet)] in any order, but was [Fruit(name=pear, color=green, taste=sweet), Fruit(name=pear, color=green, taste=sweet), Fruit(name=apple, color=green, taste=sweet)]
 ```

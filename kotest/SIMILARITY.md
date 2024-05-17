@@ -19,37 +19,25 @@ listOf(Fruit("pear", "green", "sweet"), Fruit("pear", "green", "sweet"), Fruit("
 Collection should contain [Fruit(name=pear, color=green, taste=sweet), Fruit(name=apple, color=red, taste=sweet), Fruit(name=pear, color=green, taste=sweet)] in any order, but was [Fruit(name=pear, color=green, taste=sweet), Fruit(name=pear, color=green, taste=sweet), Fruit(name=apple, color=green, taste=sweet)]
 ```
 
-When actual and expected instances are data classes with several fields, and there is no exact match, it really helps to find
-similarities aka fuzzy matches, as shown in the section
-"Possible matches for missing keys" of the following output, where the
-matcher finds the most similar key:
-```
-shouldThrow<AssertionError> {
-   mapOf(
-      sweetGreenApple to 1
-   ) should containExactly(mapOf(sweetGreenPear to 1))
-}.message shouldBe """
-|
-|Expected:
-|  mapOf(Fruit(name=apple, color=green, taste=sweet) to 1)
-|should be equal to:
-|  mapOf(Fruit(name=pear, color=green, taste=sweet) to 1)
-|but differs by:
-|  missing keys:
-|    Fruit(name=pear, color=green, taste=sweet)
-|  extra keys:
-|    Fruit(name=apple, color=green, taste=sweet)
-|
-|Possible matches for missing keys:
-|
-| expected: Fruit(name=pear, color=green, taste=sweet),
-|  but was: Fruit(name=apple, color=green, taste=sweet),
-|  The following fields did not match:
-|    "name" expected: <"pear">, but was: <"apple">
-  """.trimMargin()
+This is why we've changed kotest to provide more details describing the mismatch, as follows:
+
+```kotest
+Some elements were missing: [Fruit(name=apple, color=red, taste=sweet)] and some elements were unexpected: [Fruit(name=apple, color=green, taste=sweet)]
+
+Possible matches for unexpected elements:
+
+ expected: Fruit(name=pear, color=green, taste=sweet),
+  but was: Fruit(name=apple, color=green, taste=sweet),
+  The following fields did not match:
+    "name" expected: <"pear">, but was: <"apple">
+
+ expected: Fruit(name=apple, color=red, taste=sweet),
+  but was: Fruit(name=apple, color=green, taste=sweet),
+  The following fields did not match:
+    "color" expected: <"red">, but was: <"green">
 ```
 
-This is implemented for the following matchers:
+So far this fuzzy matching is implemented for the following matchers:
 
 * `shouldContain`
 * `shouldContainAll`
@@ -93,6 +81,34 @@ shouldThrowAny {
 """.trimMargin()
 ```
 
+### `shouldContainExactly`
+
+```
+shouldThrow<AssertionError> {
+   mapOf(
+      sweetGreenApple to 1
+   ) should containExactly(mapOf(sweetGreenPear to 1))
+}.message shouldBe """
+|
+|Expected:
+|  mapOf(Fruit(name=apple, color=green, taste=sweet) to 1)
+|should be equal to:
+|  mapOf(Fruit(name=pear, color=green, taste=sweet) to 1)
+|but differs by:
+|  missing keys:
+|    Fruit(name=pear, color=green, taste=sweet)
+|  extra keys:
+|    Fruit(name=apple, color=green, taste=sweet)
+|
+|Possible matches for missing keys:
+|
+| expected: Fruit(name=pear, color=green, taste=sweet),
+|  but was: Fruit(name=apple, color=green, taste=sweet),
+|  The following fields did not match:
+|    "name" expected: <"pear">, but was: <"apple">
+  """.trimMargin()
+```
+
 ### `shouldContainExactlyInAnyOrder`
 
 ```kotlin
@@ -108,3 +124,7 @@ shouldThrow<AssertionError> {
 """.trimMargin()
 }
 ```
+
+## Work In Progress - More Matchers To Be Upgraded Soon
+
+At the time of this writing searching for similar elements is not added in every place where it could make a difference. Only the matchers that made it into the latest release were described in this write-up, the rest are still in the pipeline. So stay tuned for more impovements.

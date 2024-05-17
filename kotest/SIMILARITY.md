@@ -37,6 +37,9 @@ Possible matches for unexpected elements:
     "color" expected: <"red">, but was: <"green">
 ```
 
+**Note** searching for similar elements only works for data classes.
+<br/>
+<br/>
 So far this fuzzy matching is implemented for the following matchers:
 
 * `shouldContain`

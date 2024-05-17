@@ -21,7 +21,7 @@ Collection should contain [Fruit(name=pear, color=green, taste=sweet), Fruit(nam
 
 This is why we've changed kotest to provide more details describing the mismatch, as follows:
 
-```kotest
+```kotlin
 Some elements were missing: [Fruit(name=apple, color=red, taste=sweet)] and some elements were unexpected: [Fruit(name=apple, color=green, taste=sweet)]
 
 Possible matches for unexpected elements:
@@ -83,7 +83,7 @@ shouldThrowAny {
 
 ### `shouldContainExactly`
 
-```
+```kotlin
 shouldThrow<AssertionError> {
    mapOf(
       sweetGreenApple to 1

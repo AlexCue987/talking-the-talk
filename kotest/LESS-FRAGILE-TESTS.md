@@ -29,3 +29,20 @@ But logically it is the same json, even though it is a different `String`. So a 
 ```
 <br/>
 <br/>
+### The Test Is Still Fragile - Adding New Field Breaks It
+Suppose we need add one more field, named `weight`, to the data class we've serialized our `json` from, as follows:
+```kotlin
+data class Thing(
+  val color: String,
+  val name: String,
+  val weight: BigDecimal,
+)
+```
+This change will break our unit test, and we'll need to add a new field to expected json:
+```kotlin
+actual shouldEqualJson """{"name":"apple", "color":"red", "weight": 0.34}"""
+```
+But let's ask ourselves a simple question: why do we need this test at all? What exactly are we trying to test here?
+<br/>
+<br/>
+

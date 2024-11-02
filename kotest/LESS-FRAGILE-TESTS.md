@@ -29,6 +29,7 @@ But logically it is the same json, even though it is a different `String`. So a 
 ```
 <br/>
 <br/>
+
 ### The Test Is Still Fragile - Adding New Field Breaks It
 
 Suppose we need add one more field, named `weight`, to the data class we've serialized our `json` from, as follows:

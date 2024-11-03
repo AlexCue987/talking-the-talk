@@ -4,6 +4,16 @@ A test used to pass, and all of a sudden it's failing? Sounds familiar? There ar
 <br/>
 <br/>
 Let's refactor a few unreliable tests into more robust ones, using `kotest`'s matchers.
+<br/>
+<br/>
+** Disclaimer: some features described here are not in Kotest 5.6.1, they will be released in 6.0.
+
+### `shouldBe` Is A Swiss Army Knife
+
+A Swiss army knife has a screwdriver, scissors, a file, and more - but a specialized screwdriver is way better.
+<br/>
+<br/>
+Likewise, `shouldBe` can do almost everything, but for many specialized tasks we'd rather use specialized tools.  
 
 ### Name/Value Pairs in Json Are Unordered - use `shouldEqualJson`
 
